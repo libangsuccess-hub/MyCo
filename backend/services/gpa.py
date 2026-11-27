@@ -1,5 +1,7 @@
+from decimal import Decimal
+
 def calculate_gpa(courses):
-    total_weighted_points = 0
+    total_weighted_points = Decimal("0")
     total_credit_units = 0
 
     for course in courses:
@@ -15,8 +17,15 @@ def calculate_gpa(courses):
         if grade_point is None:
             continue
 
-        if not isinstance(grade_point, (int, float)) or isinstance(grade_point, bool):
+        if isinstance(grade_point, bool) or not isinstance(
+            grade_point, (int, float, Decimal)
+        ):
             raise ValueError("Grade point must be a number.")
+
+        grade_point = Decimal(str(grade_point))
+
+        if not grade_point.is_finite():
+            raise ValueError("Grade point must be finite.")
 
         if grade_point < 0 or grade_point > 5:
             raise ValueError("Grade point must be between 0 and 5.")
@@ -27,4 +36,6 @@ def calculate_gpa(courses):
     if total_credit_units == 0:
         return 0.0
 
-    return round(total_weighted_points / total_credit_units, 2)
+    result = total_weighted_points / total_credit_units
+
+    return round(float(result), 2)
