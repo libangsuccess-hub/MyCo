@@ -21,3 +21,6 @@ class StudentCoursesResponse(BaseModel):
     student_id: int
     semester_id: int
     courses: list[EnrolledCourseResponse]
+
+class ScoreUpdate(BaseModel):
+    score: Decimal = Field(ge=0, le=100)    

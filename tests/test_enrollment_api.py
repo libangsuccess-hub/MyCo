@@ -75,3 +75,30 @@ def test_get_courses_no_records():
     assert response.status_code == 404    
 
     assert response.status_code == 404
+
+def test_update_score():
+    response = client.put(
+        "/enrollments/2/score",
+        json={"score": 65}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["score"] == 65
+
+
+def test_update_score_invalid_enrollment():
+    response = client.put(
+        "/enrollments/9999/score",
+        json={"score": 65}
+    )
+
+    assert response.status_code == 404
+
+
+def test_score_out_of_range():
+    response = client.put(
+        "/enrollments/2/score",
+        json={"score": 105}
+    )
+
+    assert response.status_code == 422

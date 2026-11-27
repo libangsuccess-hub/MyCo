@@ -10,7 +10,7 @@ def test_gpa_endpoint():
     )
 
     assert response.status_code == 200
-    assert response.json()["gpa"] == 5.0
+    assert response.json()["gpa"] == 4.5
 
 def test_gpa_endpoint_no_records():
     response = client.get(

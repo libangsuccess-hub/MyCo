@@ -4,6 +4,9 @@ from backend.models.enrollment import EnrollmentCreate
 from backend.database.connection import get_connection
 from backend.models.enrollment import StudentCoursesResponse
 from backend.services.enrollments import get_student_courses
+from backend.models.enrollment import ScoreUpdate
+from backend.services.scores import update_student_score
+
 
 router = APIRouter()
 
@@ -76,4 +79,24 @@ def get_enrolled_courses(student_id: int, semester_id: int):
         "student_id": student_id,
         "semester_id": semester_id,
         "courses": courses
+    }
+
+@router.put("/enrollments/{enrollment_id}/score")
+def update_score(enrollment_id: int, score_data: ScoreUpdate):
+
+    enrollment = update_student_score(
+        enrollment_id,
+        score_data.score
+    )
+
+    if enrollment is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Enrollment not found."
+        )
+
+    return {
+        "message": "Student score updated successfully",
+        "enrollment_id": enrollment,
+        "score": score_data.score
     }
