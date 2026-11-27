@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException
 from psycopg.errors import ForeignKeyViolation, UniqueViolation
 from backend.models.enrollment import EnrollmentCreate
 from backend.database.connection import get_connection
+from backend.models.enrollment import StudentCoursesResponse
+from backend.services.enrollments import get_student_courses
+
 router = APIRouter()
 
 
@@ -54,3 +57,23 @@ def enroll_student(enrollment: EnrollmentCreate):
 
     finally:
         connection.close()
+
+@router.get(
+    "/students/{student_id}/semesters/{semester_id}/courses",
+    response_model=StudentCoursesResponse
+)
+def get_enrolled_courses(student_id: int, semester_id: int):
+
+    courses = get_student_courses(student_id, semester_id)
+
+    if not courses:
+        raise HTTPException(
+            status_code=404,
+            detail="No enrolled courses found for this student and semester."
+        )
+
+    return {
+        "student_id": student_id,
+        "semester_id": semester_id,
+        "courses": courses
+    }

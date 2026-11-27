@@ -53,4 +53,25 @@ def test_invalid_semester():
         }
     )
 
+def test_get_student_courses():
+    response = client.get(
+        "/students/1/semesters/1/courses"
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["student_id"] == 1
+    assert data["semester_id"] == 1
+    assert len(data["courses"]) == 2
+
+
+def test_get_courses_no_records():
+    response = client.get(
+        "/students/9999/semesters/1/courses"
+    )
+
+    assert response.status_code == 404    
+
     assert response.status_code == 404
